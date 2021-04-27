@@ -1,16 +1,79 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="JIRIfy">
-  <meta name="author" content="Tomasz Giba">
+<head>
+    <meta charset="utf-8">
+
+    <title>JIRIfy</title>
+    <meta name="description" content="JIRIfy">
+    <meta name="author" content="Tomasz Giba">
 
 </head>
 
 <body>
-  <script type="text/javascript"></script>
+    <textarea id="text" rows="30" cols="70"></textarea>
+    <br />
+    <button id="button">JIRIfy!</button>
+    <!-- <button id="copy_result" disabled>COPY</button> -->
+    <br/>
+    <span id="result"></span>
 </body>
+<script type="text/javascript">
+    const SEPARATOR = "-"
+    const JIRAnumMatcher = /ENG-\d{1,}/g
+
+    function slugify(text) {
+        text = text
+            .toString()
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with -
+            .replace(/&/g, "-and-") // Replace & with 'and'
+            .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+            .replace(/\--+/g, "-") // Replace multiple - with single -
+            .replace(/^-+/, "") // Trim - from start of text
+            .replace(/-+$/, "") // Trim - from end of text
+        if (typeof SEPARATOR !== "undefined" && SEPARATOR !== "-") {
+            text = text.replace(/-/g, SEPARATOR)
+        }
+        return text
+    }
+
+    function copyToClip() {
+        var copyText = document.getElementById("result");
+
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+        document.execCommand("copy");
+    }
+
+    let $btn = document.getElementById("button")
+    $btn.addEventListener("click", jirify);
+
+    let $copy_result = document.getElementById("copy_result")
+    $copy_result.addEventListener("click", copyToClip);
+
+
+    let $text = document.getElementById("text")
+
+    function jirify(event) {
+        matchJira = text.value.match(JIRAnumMatcher)
+        if (matchJira != null) {
+            textWithoutJira = text.value.replace(JIRAnumMatcher, "")
+            jiraNum = matchJira[0]
+            slug = slugify(textWithoutJira)
+
+            branchName = jiraNum + SEPARATOR + slug
+
+            let $result = document.getElementById("result")
+            $result.innerText = branchName
+
+            {{/*  $copy_result.disabled = false  */}}
+        }
+    }
+
+
+</script>
+
 </html>
